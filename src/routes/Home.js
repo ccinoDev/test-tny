@@ -2,6 +2,27 @@ import React, { useState } from "react";
 import { connect } from "react-redux";
 import { add } from "../store";
 import ToDo from "../components/ToDo";
+import styled from "styled-components";
+import tny1 from "../imgs/tny-1.jpeg";
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+`;
+
+const Title = styled.h1`
+  font-size: 60px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: center;
+`;
+
+const Image = styled.img`
+  width: 300px;
+  height: 300px;
+`;
 
 function Home({ toDos, addToDo }) {
   const [text, setText] = useState("");
@@ -14,18 +35,20 @@ function Home({ toDos, addToDo }) {
     setText("");
   }
   return (
-    <>
-      <h1>To Do</h1>
-      <form onSubmit={onSubmit}>
+    <Container>
+      <Title>TNY's Homepage!!</Title>
+      <Image src={tny1}></Image>
+
+      {/* <form onSubmit={onSubmit}>
         <input type="text" value={text} onChange={onChange} />
-        <button>Add</button>
+        <button>Ãß°¡</button>
       </form>
       <ul>
         {toDos.map((toDo) => (
           <ToDo {...toDo} key={toDo.id} />
         ))}
-      </ul>
-    </>
+      </ul> */}
+    </Container>
   );
 }
 
