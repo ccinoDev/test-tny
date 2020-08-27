@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { add } from "../store";
-import ToDo from "../components/ToDo";
+// import ToDo from "../components/ToDo";
 import styled from "styled-components";
 import tny1 from "../imgs/tny-1.jpeg";
 
@@ -22,22 +22,24 @@ const Title = styled.h1`
 const Image = styled.img`
   width: 300px;
   height: 300px;
+  margin-bottom: 20px;
 `;
 
 function Home({ toDos, addToDo }) {
-  const [text, setText] = useState("");
-  function onChange(e) {
-    setText(e.target.value);
-  }
-  function onSubmit(e) {
-    e.preventDefault();
-    addToDo(text);
-    setText("");
-  }
+  // const [text, setText] = useState("");
+  // function onChange(e) {
+  //   setText(e.target.value);
+  // }
+  // function onSubmit(e) {
+  //   e.preventDefault();
+  //   addToDo(text);
+  //   setText("");
+  // }
   return (
     <Container>
       <Title>TNY's Homepage!!</Title>
       <Image src={tny1}></Image>
+      <h3>My name is TnyTny~~ :D</h3>
 
       {/* <form onSubmit={onSubmit}>
         <input type="text" value={text} onChange={onChange} />
