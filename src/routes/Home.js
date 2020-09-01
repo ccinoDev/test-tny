@@ -4,6 +4,7 @@ import { add } from "../store";
 // import ToDo from "../components/ToDo";
 import styled from "styled-components";
 import tny1 from "../imgs/tny-1.jpeg";
+import axios from "axios";
 
 const Container = styled.div`
   display: grid;
@@ -71,18 +72,71 @@ const Item = styled.div`
 `;
 
 const ItemDate = styled(Item)`
-  background-color: #dff9fb;
+  background: ${(props) => (props.old ? "#d2dae2" : "#dff9fb")};
   height: 100px;
 `;
 
-function Home({ toDos, addToDo }) {
-  var sundayFlag = false;
-  const dateList = {
-    id: [],
-    date: [],
-  };
-  for (var i = 1; i < 32; i++) {
-    dateList.id[i] = i;
+const FIELDS =
+  "id,media_type,media_url,permalink,thumbnail_url,username,caption";
+const ACCESS_TOKEN =
+  "IGQVJVWm9QRUdDXzhKV25mMkNRQXd5ZA3ozRkhwR2R3cmNZATDBGWEFVSU9rX0drMktTYVFfaGN3NzdPWHFnZAUE1djJVdFNISVhLSzRjNXlhamhqLUlDU0pTWU1RWTF1OFh3aFpKQ1hR";
+
+function Home({ myPosts, addToDo }) {
+  let sundayFlag = false;
+  const dateList = [];
+  let dateValue = 26;
+  for (let i = 1; i < 43; i++) {
+    dateList.push({ id: i, date: dateValue++ });
+    if (dateValue === 32) {
+      dateValue = 1;
+    }
+  }
+
+  async function getDatafromInsta() {
+    try {
+      const {
+        data: { data },
+      } = await axios({
+        url: `https://graph.instagram.com/17841402231174512/media?fields=${FIELDS}&access_token=${ACCESS_TOKEN}`,
+        method: "GET",
+      });
+      // console.log(response.data);
+      return data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const resData = getDatafromInsta();
+  resData.then((value) => {
+    console.log(value);
+  });
+
+  function calendarDate() {
+    return dateList.map((date) => {
+      let colorValue = "#1e272e";
+      if (date.id === 1 || sundayFlag === true) {
+        colorValue = "#f53b57";
+        sundayFlag = false;
+      } else if (date.id % 7 === 0) {
+        colorValue = "#3c40c6";
+        sundayFlag = true;
+      }
+
+      if (date.id < 7 || date.id > 37) {
+        return (
+          <ItemDate key={date.id} old>
+            <font color={colorValue}>{date.date}</font>
+          </ItemDate>
+        );
+      } else {
+        return (
+          <ItemDate key={date.id}>
+            <font color={colorValue}>{date.date}</font>
+          </ItemDate>
+        );
+      }
+    });
   }
 
   return (
@@ -90,6 +144,7 @@ function Home({ toDos, addToDo }) {
       <Header>
         <h1>나윤's 홈페이지!!</h1>
         <Image src={tny1}></Image>
+        {/* <Image src={myPosts.data[1].media_url}></Image> */}
         <h3>내 이름은 '이나윤'입니다~~ :D</h3>
       </Header>
       <Main>
@@ -102,21 +157,7 @@ function Home({ toDos, addToDo }) {
           <Item>목</Item>
           <Item>금</Item>
           <Item>토</Item>
-          {dateList.id.map((date) => {
-            var colorValue = "#1e272e";
-            if (date === 1 || sundayFlag === true) {
-              colorValue = "#f53b57";
-              sundayFlag = false;
-            } else if (date % 7 === 0) {
-              colorValue = "#3c40c6";
-              sundayFlag = true;
-            }
-            return (
-              <ItemDate key={date}>
-                <font color={colorValue}>{date}</font>
-              </ItemDate>
-            );
-          })}
+          {calendarDate()}
         </Grid>
       </Main>
       <Footer>
@@ -137,7 +178,7 @@ function Home({ toDos, addToDo }) {
 }
 
 function mapStateToProps(state) {
-  return { toDos: state };
+  return { myPosts: state };
 }
 
 function mapDispatchToProps(dispatch) {
