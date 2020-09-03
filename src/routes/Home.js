@@ -1,10 +1,12 @@
 import React from "react";
+// import React, { useState } from "react";
 import { connect } from "react-redux";
 import { add } from "../store";
 // import ToDo from "../components/ToDo";
 import styled from "styled-components";
 import tny1 from "../imgs/tny-1.jpeg";
 import axios from "axios";
+import { useAsync } from "react-async";
 
 const Container = styled.div`
   display: grid;
@@ -50,6 +52,12 @@ const Image = styled.img`
   margin-bottom: 15px;
 `;
 
+const SmallImage = styled.img`
+  width: 60px;
+  height: 45px;
+  margin: 5px;
+`;
+
 const Grid = styled.div`
   width: 800px;
   display: grid;
@@ -81,8 +89,21 @@ const FIELDS =
 const ACCESS_TOKEN =
   "IGQVJVWm9QRUdDXzhKV25mMkNRQXd5ZA3ozRkhwR2R3cmNZATDBGWEFVSU9rX0drMktTYVFfaGN3NzdPWHFnZAUE1djJVdFNISVhLSzRjNXlhamhqLUlDU0pTWU1RWTF1OFh3aFpKQ1hR";
 
+async function getDatafromInsta() {
+  try {
+    const {
+      data: { data },
+    } = await axios({
+      url: `https://graph.instagram.com/17841402231174512/media?fields=${FIELDS}&access_token=${ACCESS_TOKEN}`,
+      method: "GET",
+    });
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 function Home({ myPosts, addToDo }) {
-  let sundayFlag = false;
   const dateList = [];
   let dateValue = 26;
   for (let i = 1; i < 43; i++) {
@@ -92,29 +113,29 @@ function Home({ myPosts, addToDo }) {
     }
   }
 
-  async function getDatafromInsta() {
-    try {
-      const {
-        data: { data },
-      } = await axios({
-        url: `https://graph.instagram.com/17841402231174512/media?fields=${FIELDS}&access_token=${ACCESS_TOKEN}`,
-        method: "GET",
-      });
-      // console.log(response.data);
-      return data;
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  const resData = getDatafromInsta();
-  resData.then((value) => {
-    console.log(value);
+  // const [postId, setPostId] = useState(null);
+  const { data: posts, error, isLoading } = useAsync({
+    promiseFn: getDatafromInsta,
   });
 
+  if (isLoading) return <div>로딩중..</div>;
+  if (error) return <div>에러가 발생했습니다</div>;
+  if (!posts) return <div>포스팅이 없습니다!!!</div>;
+
+  // console.log(posts);
+
   function calendarDate() {
+    let sundayFlag = false;
+
     return dateList.map((date) => {
       let colorValue = "#1e272e";
+      let smallImgSrc =
+        "https://ww.namu.la/s/5943bd5b0243cc2c5f1bdf39e2f5019d611cafabf5953427e7654a6d2fa960c1e2543b0de435d7809a80b00d436f1f0e3ee09507c210d21262520ef1118a04c8a87cc4d5d9c0712e7a75f04c17697bacc8496b9c5e122d19847b05e91aaf62b500885fbb78c67d3fa0e6a9dea7236e83";
+
+      if (date.date < posts.length + 1) {
+        smallImgSrc = posts[date.date - 1].media_url;
+      }
+
       if (date.id === 1 || sundayFlag === true) {
         colorValue = "#f53b57";
         sundayFlag = false;
@@ -132,7 +153,10 @@ function Home({ myPosts, addToDo }) {
       } else {
         return (
           <ItemDate key={date.id}>
-            <font color={colorValue}>{date.date}</font>
+            <div>
+              <font color={colorValue}>{date.date}</font>
+            </div>
+            <SmallImage src={smallImgSrc}></SmallImage>
           </ItemDate>
         );
       }
