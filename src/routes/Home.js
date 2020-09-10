@@ -1,12 +1,13 @@
-import React from "react";
 // import React, { useState } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { add } from "../store";
 // import ToDo from "../components/ToDo";
 import styled from "styled-components";
-import tny1 from "../imgs/tny-1.jpeg";
+import tny1 from "../imgs/tny-1.png";
 import axios from "axios";
 import { useAsync } from "react-async";
+import moment from "moment";
 
 const Container = styled.div`
   display: grid;
@@ -47,9 +48,10 @@ const Footer = styled.div`
 `;
 
 const Image = styled.img`
-  width: 200px;
-  height: 150px;
+  width: 100px;
+  height: 70px;
   margin-bottom: 15px;
+  border-radius: 10px;
 `;
 
 const SmallImage = styled.img`
@@ -85,7 +87,7 @@ const ItemDate = styled(Item)`
 `;
 
 const FIELDS =
-  "id,media_type,media_url,permalink,thumbnail_url,username,caption";
+  "id,media_type,media_url,permalink,thumbnail_url,username,caption,timestamp";
 const ACCESS_TOKEN =
   "IGQVJVWm9QRUdDXzhKV25mMkNRQXd5ZA3ozRkhwR2R3cmNZATDBGWEFVSU9rX0drMktTYVFfaGN3NzdPWHFnZAUE1djJVdFNISVhLSzRjNXlhamhqLUlDU0pTWU1RWTF1OFh3aFpKQ1hR";
 
@@ -123,6 +125,38 @@ function Home({ myPosts, addToDo }) {
   if (!posts) return <div>포스팅이 없습니다!!!</div>;
 
   // console.log(posts);
+  function generate() {
+    const today = moment();
+    const startWeek = today.clone().startOf("month").week();
+    const endWeek =
+      today.clone().endOf("month").week() === 1
+        ? 53
+        : today.clone().endOf("month").week();
+
+    let calendar = [];
+    for (let week = startWeek; week <= endWeek; week++) {
+      calendar.push(
+        <div className="row" key={week}>
+          {Array(7)
+            .fill(0)
+            .map((n, i) => {
+              let current = today
+                .clone()
+                .week(week)
+                .startOf("week")
+                .add(n + i, "day");
+              return (
+                <div className={`box`} key={i}>
+                  <span className={`text`}>{current.format("D")}</span>
+                  <span>''</span>
+                </div>
+              );
+            })}
+        </div>
+      );
+    }
+    return calendar;
+  }
 
   function calendarDate() {
     let sundayFlag = false;
@@ -132,10 +166,16 @@ function Home({ myPosts, addToDo }) {
       let smallImgSrc =
         "https://ww.namu.la/s/5943bd5b0243cc2c5f1bdf39e2f5019d611cafabf5953427e7654a6d2fa960c1e2543b0de435d7809a80b00d436f1f0e3ee09507c210d21262520ef1118a04c8a87cc4d5d9c0712e7a75f04c17697bacc8496b9c5e122d19847b05e91aaf62b500885fbb78c67d3fa0e6a9dea7236e83";
 
+      // 해당날짜 이미지 불러오기
       if (date.date < posts.length + 1) {
-        smallImgSrc = posts[date.date - 1].media_url;
+        const index = date.date - 1;
+        smallImgSrc = posts[index].media_url;
+        if (posts[index].media_type === "VIDEO") {
+          smallImgSrc = posts[index].thumbnail_url;
+        }
       }
 
+      // 일 ~ 토 날짜 계산
       if (date.id === 1 || sundayFlag === true) {
         colorValue = "#f53b57";
         sundayFlag = false;
@@ -166,13 +206,22 @@ function Home({ myPosts, addToDo }) {
   return (
     <Container>
       <Header>
-        <h1>나윤's 홈페이지!!</h1>
+        <h1>
+          <span role="img" aria-label="">
+            ♥️
+          </span>{" "}
+          나윤's 홈페이지{" "}
+          <span role="img" aria-label="">
+            ♥️
+          </span>
+        </h1>
         <Image src={tny1}></Image>
-        {/* <Image src={myPosts.data[1].media_url}></Image> */}
         <h3>내 이름은 '이나윤'입니다~~ :D</h3>
       </Header>
       <Main>
-        <h1>나윤's 달력</h1>
+        <h2>나윤's 달력 2020</h2>
+        {generate()}
+        <h4>❮ 8월 ❯</h4>
         <Grid>
           <Item>일</Item>
           <Item>월</Item>
