@@ -82,7 +82,7 @@ const Item = styled.div`
 `;
 
 const ItemDate = styled(Item)`
-  background: ${(props) => (props.old ? "#d2dae2" : "#dff9fb")};
+  background: ${(props) => props.color || "#dff9fb"};
   height: 100px;
 `;
 
@@ -106,15 +106,6 @@ async function getDatafromInsta() {
 }
 
 function Home({ myPosts, addToDo }) {
-  const dateList = [];
-  let dateValue = 26;
-  for (let i = 1; i < 43; i++) {
-    dateList.push({ id: i, date: dateValue++ });
-    if (dateValue === 32) {
-      dateValue = 1;
-    }
-  }
-
   // const [postId, setPostId] = useState(null);
   const { data: posts, error, isLoading } = useAsync({
     promiseFn: getDatafromInsta,
@@ -124,7 +115,6 @@ function Home({ myPosts, addToDo }) {
   if (error) return <div>에러가 발생했습니다</div>;
   if (!posts) return <div>포스팅이 없습니다!!!</div>;
 
-  // console.log(posts);
   function generate() {
     const today = moment();
     const startWeek = today.clone().startOf("month").week();
@@ -136,23 +126,34 @@ function Home({ myPosts, addToDo }) {
     let calendar = [];
     for (let week = startWeek; week <= endWeek; week++) {
       calendar.push(
-        <div className="row" key={week}>
+        <Grid key={week}>
           {Array(7)
             .fill(0)
             .map((n, i) => {
-              let current = today
+              const current = today
                 .clone()
                 .week(week)
                 .startOf("week")
-                .add(n + i, "day");
+                .add(i, "day");
+
+              let backgroundColor = "#dff9fb";
+              if (today.format("YYYYMMDD") === current.format("YYYYMMDD")) {
+                // 오늘
+                backgroundColor = "#74b9ff";
+              } else if (current.format("MM") !== today.format("MM")) {
+                // 다른달
+                backgroundColor = "#d2dae2";
+              }
+
               return (
-                <div className={`box`} key={i}>
-                  <span className={`text`}>{current.format("D")}</span>
-                  <span>''</span>
-                </div>
+                <ItemDate key={current.format("D")} color={backgroundColor}>
+                  <div>
+                    <span className={`text`}>{current.format("D")}</span>
+                  </div>
+                </ItemDate>
               );
             })}
-        </div>
+        </Grid>
       );
     }
     return calendar;
@@ -160,8 +161,9 @@ function Home({ myPosts, addToDo }) {
 
   function calendarDate() {
     let sundayFlag = false;
+    let temp = [];
 
-    return dateList.map((date) => {
+    return temp.map((date) => {
       let colorValue = "#1e272e";
       let smallImgSrc =
         "https://ww.namu.la/s/5943bd5b0243cc2c5f1bdf39e2f5019d611cafabf5953427e7654a6d2fa960c1e2543b0de435d7809a80b00d436f1f0e3ee09507c210d21262520ef1118a04c8a87cc4d5d9c0712e7a75f04c17697bacc8496b9c5e122d19847b05e91aaf62b500885fbb78c67d3fa0e6a9dea7236e83";
@@ -184,22 +186,14 @@ function Home({ myPosts, addToDo }) {
         sundayFlag = true;
       }
 
-      if (date.id < 7 || date.id > 37) {
-        return (
-          <ItemDate key={date.id} old>
+      return (
+        <ItemDate key={date.id}>
+          <div>
             <font color={colorValue}>{date.date}</font>
-          </ItemDate>
-        );
-      } else {
-        return (
-          <ItemDate key={date.id}>
-            <div>
-              <font color={colorValue}>{date.date}</font>
-            </div>
-            <SmallImage src={smallImgSrc}></SmallImage>
-          </ItemDate>
-        );
-      }
+          </div>
+          <SmallImage src={smallImgSrc}></SmallImage>
+        </ItemDate>
+      );
     });
   }
 
@@ -219,9 +213,8 @@ function Home({ myPosts, addToDo }) {
         <h3>내 이름은 '이나윤'입니다~~ :D</h3>
       </Header>
       <Main>
-        <h2>나윤's 달력 2020</h2>
-        {generate()}
-        <h4>❮ 8월 ❯</h4>
+        <h2>나윤's 달력</h2>
+        <h4>❮ {moment().format("MMMM YYYY")} ❯</h4>
         <Grid>
           <Item>일</Item>
           <Item>월</Item>
@@ -230,8 +223,8 @@ function Home({ myPosts, addToDo }) {
           <Item>목</Item>
           <Item>금</Item>
           <Item>토</Item>
-          {calendarDate()}
         </Grid>
+        {generate()}
       </Main>
       <Footer>
         <h6>Copyright (c) 2020 Nayoon. All Rights Reserved.</h6>
