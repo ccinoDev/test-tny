@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^7.1.2",
     "axios": "^0.20.0",
     "date-arithmetic": "^4.1.0",
+    "dotenv": "^8.2.0",
     "gapi-script": "^1.0.2",
     "moment": "^2.27.0",
     "prop-types": "^15.7.2",

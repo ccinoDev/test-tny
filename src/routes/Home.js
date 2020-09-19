@@ -8,6 +8,8 @@ import tny1 from "../imgs/tny-1.png";
 import axios from "axios";
 import { useAsync } from "react-async";
 import moment from "moment";
+import dotenv from "dotenv";
+dotenv.config();
 
 const Container = styled.div`
   display: grid;
@@ -86,17 +88,12 @@ const ItemDate = styled(Item)`
   height: 100px;
 `;
 
-const FIELDS =
-  "id,media_type,media_url,permalink,thumbnail_url,username,caption,timestamp";
-const ACCESS_TOKEN =
-  "IGQVJVWm9QRUdDXzhKV25mMkNRQXd5ZA3ozRkhwR2R3cmNZATDBGWEFVSU9rX0drMktTYVFfaGN3NzdPWHFnZAUE1djJVdFNISVhLSzRjNXlhamhqLUlDU0pTWU1RWTF1OFh3aFpKQ1hR";
-
 async function getDatafromInsta() {
   try {
     const {
       data: { data },
     } = await axios({
-      url: `https://graph.instagram.com/17841402231174512/media?fields=${FIELDS}&access_token=${ACCESS_TOKEN}`,
+      url: `https://graph.instagram.com/17841402231174512/media?fields=${process.env.REACT_APP_FIELDS}&access_token=${process.env.REACT_APP_ACCESS_TOKEN}`,
       method: "GET",
     });
     return data;
