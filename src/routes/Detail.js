@@ -1,11 +1,19 @@
 import React from "react";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 
-function Detail({ toDo }) {
+function Detail({ date, id }) {
   return (
     <>
-      <h1>{toDo?.text}</h1>
-      <h5>Created at: {toDo?.id}</h5>
+      <h1>
+        {date.format("M")}월 {date.format("D")}일
+      </h1>
+      <h5>Created at: {id}</h5>
+      <Link to={`/`}>
+        <button>
+          <span roll="img">⬅</span>
+        </button>
+      </Link>
     </>
   );
 }
@@ -16,7 +24,7 @@ function mapStateToProps(state, ownProps) {
       params: { id },
     },
   } = ownProps;
-  return { toDo: state.find((toDo) => toDo.id === parseInt(id)) };
+  return { date: state.date, id: id };
 }
 
 export default connect(mapStateToProps)(Detail);

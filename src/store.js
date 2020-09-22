@@ -1,19 +1,18 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
-
-let idData = 0;
+import moment from "moment";
 
 const days = createSlice({
   name: "daysReducer",
-  initialState: [],
+  initialState: {
+    date: moment(),
+  },
   reducers: {
-    add: (state, action) => {
-      state.push({ text: action.payload, id: idData++ });
+    changeDate: (state, action) => {
+      state.date = action.payload;
     },
-    remove: (state, action) =>
-      state.filter((toDo) => toDo.id !== action.payload),
   },
 });
 
-export const { add, remove } = days.actions;
+export const { changeDate } = days.actions;
 
 export default configureStore({ reducer: days.reducer });

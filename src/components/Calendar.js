@@ -1,12 +1,18 @@
 import React from "react";
-import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import moment from "moment";
-import { add } from "../store";
+
+const MonthContainer = styled.div`
+  width: 600px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+`;
 
 const Grid = styled.div`
-  width: 800px;
+  width: 600px;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   grid-template-rows: repeat(auto-fill, 1fr);
@@ -29,28 +35,20 @@ const Item = styled.div`
 const ItemDate = styled(Item)`
   background: ${(props) => props.backColor || "#dff9fb"};
   color: ${(props) => props.color || "#2d3436"};
-  height: 100px;
+  height: 80px;
   &:hover {
     color: #00b894;
   }
 `;
 
-function sleep(milliseconds) {
-  const date = Date.now();
-  let currentDate = null;
-  do {
-    currentDate = Date.now();
-  } while (currentDate - date < milliseconds);
-}
-
-function Calendar({ addDay }) {
+function Calendar(props) {
   function generate() {
     const today = moment();
-    const startWeek = today.clone().startOf("month").week();
+    const startWeek = props.date.clone().startOf("month").week();
     const endWeek =
-      today.clone().endOf("month").week() === 1
+      props.date.clone().endOf("month").week() === 1
         ? 53
-        : today.clone().endOf("month").week();
+        : props.date.clone().endOf("month").week();
 
     let calendar = [];
     for (let week = startWeek; week <= endWeek; week++) {
@@ -59,7 +57,7 @@ function Calendar({ addDay }) {
           {Array(7)
             .fill(0)
             .map((n, i) => {
-              const current = today
+              const current = props.date
                 .clone()
                 .week(week)
                 .startOf("week")
@@ -70,7 +68,7 @@ function Calendar({ addDay }) {
               if (today.format("YYYYMMDD") === current.format("YYYYMMDD")) {
                 // 오늘
                 backColor = "#74b9ff";
-              } else if (current.format("MM") !== today.format("MM")) {
+              } else if (current.format("MM") !== props.date.format("MM")) {
                 // 다른달
                 backColor = "#d2dae2";
                 color = "#636e72";
@@ -82,22 +80,20 @@ function Calendar({ addDay }) {
                 color = "#3c40c6";
               }
 
-              const dayData = {
-                text: current.format("D"),
-                id: current.format("YYMMDD"),
+              const dayInfo = {
+                day: current.format("D"),
+                id: current.format("YYYYMMDD"),
               };
 
-              //addDay(dayData);
-              //sleep(100);
-
               return (
-                <Link to={`/${dayData.id}`} key={dayData.id}>
+                <Link to={`/${dayInfo.id}`} key={dayInfo.id}>
                   <ItemDate
-                    key={current.format("D")}
+                    key={dayInfo.day}
                     backColor={backColor}
                     color={color}
+                    onClick={() => props.changeDate(current)}
                   >
-                    <span>{current.format("D")}</span>
+                    <span>{dayInfo.day}</span>
                   </ItemDate>
                 </Link>
               );
@@ -110,8 +106,26 @@ function Calendar({ addDay }) {
 
   return (
     <>
-      <h2>나윤's 달력</h2>
-      <h4>❮ {moment().format("MMMM YYYY")} ❯</h4>
+      <h3>나윤's 달력</h3>
+      <MonthContainer>
+        <button
+          onClick={() =>
+            props.changeDate(props.date.clone().subtract(1, "month"))
+          }
+        >
+          ❮❮
+        </button>
+        <a href=" ">
+          <h4 onClick={() => props.changeDate(moment())}>
+            {props.date.format("MMMM YYYY")}{" "}
+          </h4>
+        </a>
+        <button
+          onClick={() => props.changeDate(props.date.clone().add(1, "month"))}
+        >
+          ❯❯
+        </button>
+      </MonthContainer>
       <Grid>
         <Item>일</Item>
         <Item>월</Item>
@@ -126,14 +140,4 @@ function Calendar({ addDay }) {
   );
 }
 
-function mapStateToProps(state) {
-  return { days: state };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    addDay: (payload) => dispatch(add(payload)),
-  };
-}
-
-export default connect(null, mapDispatchToProps)(Calendar);
+export default Calendar;

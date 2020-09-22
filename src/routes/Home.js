@@ -1,8 +1,7 @@
 // import React, { useState } from "react";
 import React from "react";
 import { connect } from "react-redux";
-import { add } from "../store";
-// import ToDo from "../components/ToDo";
+import { changeDate } from "../store";
 import styled from "styled-components";
 import tny1 from "../imgs/tny-1.png";
 import axios from "axios";
@@ -56,11 +55,11 @@ const Image = styled.img`
   border-radius: 10px;
 `;
 
-const SmallImage = styled.img`
-  width: 60px;
-  height: 45px;
-  margin: 5px;
-`;
+// const SmallImage = styled.img`
+//   width: 60px;
+//   height: 45px;
+//   margin: 5px;
+// `;
 
 async function getDatafromInsta() {
   try {
@@ -76,15 +75,14 @@ async function getDatafromInsta() {
   }
 }
 
-function Home({ myPosts, addToDo }) {
-  // const [postId, setPostId] = useState(null);
-  // const { data: posts, error, isLoading } = useAsync({
-  //   promiseFn: getDatafromInsta,
-  // });
+function Home({ date, changeDate }) {
+  const { data: posts, error, isLoading } = useAsync({
+    promiseFn: getDatafromInsta,
+  });
 
-  // if (isLoading) return <div>로딩중..</div>;
-  // if (error) return <div>에러가 발생했습니다</div>;
-  // if (!posts) return <div>포스팅이 없습니다!!!</div>;
+  if (isLoading) return <div>로딩중..</div>;
+  if (error) return <div>에러가 발생했습니다</div>;
+  if (!posts) return <div>포스팅이 없습니다!!!</div>;
 
   return (
     <Container>
@@ -102,33 +100,23 @@ function Home({ myPosts, addToDo }) {
         <h3>내 이름은 '이나윤'입니다~~ :D</h3>
       </Header>
       <Main>
-        <Calendar></Calendar>
+        <Calendar date={date} changeDate={changeDate}></Calendar>
       </Main>
       <Footer>
         <h6>Copyright (c) 2020 Nayoon. All Rights Reserved.</h6>
       </Footer>
-
-      {/* <form onSubmit={onSubmit}>
-        <input type="text" value={text} onChange={onChange} />
-        <button>추가</button>
-      </form>
-      <ul>
-        {toDos.map((toDo) => (
-          <ToDo {...toDo} key={toDo.id} />
-        ))}
-      </ul> */}
     </Container>
   );
 }
 
-// function mapStateToProps(state) {
-//   return { myPosts: state };
-// }
+function mapStateToProps(state) {
+  return { date: state.date };
+}
 
 function mapDispatchToProps(dispatch) {
   return {
-    addToDo: (text) => dispatch(add(text)),
+    changeDate: (date) => dispatch(changeDate(date)),
   };
 }
 
-export default connect(null, mapDispatchToProps)(Home);
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
