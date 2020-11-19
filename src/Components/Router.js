@@ -21,7 +21,7 @@ export default () => (
       <Route path="/diary" exact component={Diary}></Route>
       <Route path="/calendar/:id" component={Detail} />
       <Route path="/etc" component={Etc}></Route>
-      <Route path="/auth*" component={Auth}></Route>
+      <Route path="/auth" component={Auth}></Route>
       <Redirect from="*" to="/"></Redirect>
     </Switch>
   </Router>
