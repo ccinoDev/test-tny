@@ -41,7 +41,9 @@ const ItemDate = styled(Item)`
   }
 `;
 
-function Calendar(props) {
+const Calendar = (props) => {
+  console.log(props.posts);
+
   function generate() {
     const today = moment();
     const startWeek = props.date.clone().startOf("month").week();
@@ -138,6 +140,6 @@ function Calendar(props) {
       {generate()}
     </>
   );
-}
+};
 
 export default Calendar;

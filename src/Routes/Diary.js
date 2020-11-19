@@ -1,11 +1,11 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { changeDate } from "../store";
 import styled from "styled-components";
-import { useAsync } from "react-async";
 import { instaApi } from "../api";
 import dotenv from "dotenv";
 import Calendar from "../Components/Calendar";
+import Loader from "../Components/Loader";
 dotenv.config();
 
 const Container = styled.div`
@@ -46,22 +46,28 @@ const Footer = styled.div`
   justify-content: center;
 `;
 
-const sCode =
-  "AQCQG6lMTlYFB06e5Mc_3bg7aVi6SdoQHCaRjyvAYj3F1qW8oVVHUEEMGZ__31LJk-eEdgYMH62fS5BFfhJV5EzOnzQR6oLtzb8sxYPG7cMKK3p9NwMoD_FpiDkHn9zACfQQsq9-KEkPKwEpBKK50UT0onm9Ff_VO7hQCbMas3CamOH4bmfMV1VIWQKDAiPfH7CElinECA7HmyTwHlp-vwkksdtKHebCnjMp40eAPrfuCg";
+const INS_FIELDS =
+  "id,media_type,media_url,permalink,thumbnail_url,username,caption,timestamp";
+const INS_TOKEN =
+  "IGQVJWbUktSmZAwRXg3OERfVzlhRTFoY3FId093V09xZAW1yV0NBdFBRZAUxzV0hSeWVjRlVCLTB0OS1IYktBLWJjOVUwQXAtMG1XQ0dIa0oyeVRIUlh5RTVYem1ZALUI0aHRMc1VmZA0VvNTh0WjVtLW5xaHNfSE9kMm4yc2hB";
+const USER_ID = "17841407527791364";
 
 const Diary = ({ date, changeDate }) => {
-  // const { data: posts, error, isLoading } = useAsync({
-  //   promiseFn: getDatafromInsta,
-  // });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState();
+  const [posts, setPosts] = useState();
 
   const getDatafromInsta = async () => {
     try {
-      window.open(
-        "https://api.instagram.com/oauth/authorize?client_id=2634490610102589&redirect_uri=https://nayoon.netlify.app/auth&&scope=user_profile,user_media&response_type=code"
-      );
-    } catch {
-      console.log("error!!");
+      const {
+        data: { data: result },
+      } = await instaApi.getMedia(USER_ID, INS_FIELDS, INS_TOKEN);
+      setPosts(result);
+    } catch (e) {
+      console.log("error:", e);
+      setError(e);
     } finally {
+      setLoading(false);
     }
   };
 
@@ -69,30 +75,36 @@ const Diary = ({ date, changeDate }) => {
     getDatafromInsta();
   }, []);
 
-  // if (isLoading) return <div>로딩중..</div>;
-  // if (error) return <div>에러가 발생했습니다</div>;
-  // if (!posts) return <div>포스팅이 없습니다!!!</div>;
-
   return (
-    <Container>
-      <Header>
-        <h1>
-          <span role="img" aria-label="">
-            ♥️
-          </span>{" "}
-          나윤's Diary{" "}
-          <span role="img" aria-label="">
-            ♥️
-          </span>
-        </h1>
-      </Header>
-      <Main>
-        <Calendar date={date} changeDate={changeDate}></Calendar>
-      </Main>
-      <Footer>
-        <h6>Copyright (c) 2020 Nayoon. All Rights Reserved.</h6>
-      </Footer>
-    </Container>
+    <>
+      {loading ? (
+        <Loader>Loading...</Loader>
+      ) : (
+        <Container>
+          <Header>
+            <h1>
+              <span role="img" aria-label="">
+                ♥️
+              </span>{" "}
+              나윤's Diary{" "}
+              <span role="img" aria-label="">
+                ♥️
+              </span>
+            </h1>
+          </Header>
+          <Main>
+            <Calendar
+              posts={posts}
+              date={date}
+              changeDate={changeDate}
+            ></Calendar>
+          </Main>
+          <Footer>
+            <h6>Copyright (c) 2020 Nayoon. All Rights Reserved.</h6>
+          </Footer>
+        </Container>
+      )}
+    </>
   );
 };
 

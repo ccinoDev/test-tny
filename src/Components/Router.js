@@ -19,7 +19,7 @@ export default () => (
     <Switch>
       <Route path="/" exact component={Home}></Route>
       <Route path="/diary" exact component={Diary}></Route>
-      <Route path="/calendar/:id" component={Detail} />
+      <Route path="/diary/:id" component={Detail} />
       <Route path="/etc" component={Etc}></Route>
       <Route path="/auth" component={Auth}></Route>
       <Redirect from="*" to="/"></Redirect>
