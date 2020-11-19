@@ -46,6 +46,9 @@ const Footer = styled.div`
   justify-content: center;
 `;
 
+const sCode =
+  "AQCQG6lMTlYFB06e5Mc_3bg7aVi6SdoQHCaRjyvAYj3F1qW8oVVHUEEMGZ__31LJk-eEdgYMH62fS5BFfhJV5EzOnzQR6oLtzb8sxYPG7cMKK3p9NwMoD_FpiDkHn9zACfQQsq9-KEkPKwEpBKK50UT0onm9Ff_VO7hQCbMas3CamOH4bmfMV1VIWQKDAiPfH7CElinECA7HmyTwHlp-vwkksdtKHebCnjMp40eAPrfuCg";
+
 const Diary = ({ date, changeDate }) => {
   // const { data: posts, error, isLoading } = useAsync({
   //   promiseFn: getDatafromInsta,
