@@ -1,11 +1,22 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
+import styled from "styled-components";
 
-function Detail({ date, id }) {
+const Image = styled.div`
+  background-image: url(${(props) => props.bgUrl});
+  width: 200px;
+  height: 250px;
+  background-size: cover;
+  border-radius: 4px;
+  background-position: center center;
+  margin: 20px 0px;
+`;
+
+function Detail({ location: { state }, date }) {
   return (
     <>
-      <Link to={`/`}>
+      <Link to={`/diary`}>
         <button>
           <span roll="img">⬅</span>
         </button>
@@ -14,7 +25,8 @@ function Detail({ date, id }) {
       <h1>
         {date.format("M")}월 {date.format("D")}일
       </h1>
-      <h5>Created at: {id}</h5>
+      <Image bgUrl={state.insData && state.insData[0].media_url}></Image>
+      <h5>Created at: {state.insData && state.insData[0].timestamp}</h5>
     </>
   );
 }

@@ -41,9 +41,14 @@ const ItemDate = styled(Item)`
   }
 `;
 
-const Calendar = (props) => {
-  console.log(props.posts);
+const SmallImage = styled.img`
+  width: 60%;
+  height: 50%;
+  margin: 5px;
+  border-radius: 4px;
+`;
 
+const Calendar = (props) => {
   function generate() {
     const today = moment();
     const startWeek = props.date.clone().startOf("month").week();
@@ -83,19 +88,41 @@ const Calendar = (props) => {
               }
 
               const dayInfo = {
-                day: current.format("D"),
+                year: current.format("YYYY"),
+                month: current.format("MM"),
+                day: current.format("DD"),
                 id: current.format("YYYYMMDD"),
               };
 
+              let smallImgSrc = null;
+              let insData = null;
+
+              if (props.posts) {
+                insData = props.posts.filter(
+                  (post) =>
+                    post.timestamp.split("-")[1] === dayInfo.month &&
+                    post.timestamp.split("-")[2].substring(0, 2) === dayInfo.day
+                );
+
+                insData.map((media) => (smallImgSrc = media.media_url));
+              }
+
               return (
-                <Link to={`/${dayInfo.id}`} key={dayInfo.id}>
+                <Link
+                  to={{
+                    pathname: `/diary/${dayInfo.id}`,
+                    state: { insData },
+                  }}
+                  key={dayInfo.day}
+                >
                   <ItemDate
                     key={dayInfo.day}
                     backColor={backColor}
                     color={color}
                     onClick={() => props.changeDate(current)}
                   >
-                    <span>{dayInfo.day}</span>
+                    <h6>{dayInfo.day}</h6>
+                    <SmallImage src={smallImgSrc}></SmallImage>
                   </ItemDate>
                 </Link>
               );

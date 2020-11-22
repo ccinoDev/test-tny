@@ -49,8 +49,12 @@ const Footer = styled.div`
 const INS_FIELDS =
   "id,media_type,media_url,permalink,thumbnail_url,username,caption,timestamp";
 const INS_TOKEN =
-  "IGQVJWbUktSmZAwRXg3OERfVzlhRTFoY3FId093V09xZAW1yV0NBdFBRZAUxzV0hSeWVjRlVCLTB0OS1IYktBLWJjOVUwQXAtMG1XQ0dIa0oyeVRIUlh5RTVYem1ZALUI0aHRMc1VmZA0VvNTh0WjVtLW5xaHNfSE9kMm4yc2hB";
+  "IGQVJWeFZAUZAk9peFEzN2RVXzc0b1JSeWxYeGExRnZAUVmJpdmlxM2dRelFiVmVHUG9KU0J2dm45Szdlcy1tWk1BVXZANRmd2Q2Vrbl9ZAYzNtRnVPaXMtNWEwVTZAxUnBQRDdvVEx1WHY5TFNsbUZAwOXM3VEZAsc3lHTjFacXA0";
 const USER_ID = "17841407527791364";
+
+// "https://api.instagram.com/oauth/authorize?client_id=2634490610102589&redirect_uri=https://nayoon.netlify.app/auth&scope=user_profile,user_media&response_type=code"
+
+// "https://graph.instagram.com/access_token?grant_type=ig_exchange_token&client_secret=fee8be5fbdac490dd886607f22928b96&access_token=IGQVJWbDIxenlOS2lJZAERCTVQ5V2tfMW1TbmFia281VC00OFZAyNGVzV2R1eXFacjNHOHM0dV9QSW5QZAjBPUFZAyaHl5cWtwRkpMWTVMWk5RdTNRQjFySk9sdjlLRGFCdW1LbExVSm94azBqT3lHcmdScEpiWml0Tk1ZAdVBv"
 
 const Diary = ({ date, changeDate }) => {
   const [loading, setLoading] = useState(true);
